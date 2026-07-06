@@ -39,9 +39,8 @@
 </p>
 
 <p align="center">
-  <!-- 33 locales shipped in packages/Webkul/Admin/src/Resources/lang (ca_ES + es_ES share the Spain flag) -->
-  🇦🇪 🇪🇸 🇩🇰 🇩🇪 🇦🇺 🇬🇧 🇳🇿 🇺🇸 🇻🇪 🇫🇮 🇫🇷 🇮🇳 🇭🇷 🇮🇩 🇮🇹 🇯🇵
-  🇰🇷 🇲🇳 🇳🇱 🇳🇴 🇵🇱 🇧🇷 🇵🇹 🇷🇴 🇷🇺 🇸🇪 🇵🇭 🇹🇷 🇺🇦 🇻🇳 🇨🇳 🇹🇼
+  🇦🇪 🇪🇸 🇩🇰 🇩🇪 🇦🇺 🇬🇧 🇦🇺 🇺🇸 🇫🇮 🇫🇷 🇮🇳 🇭🇷 
+  🇮🇹 🇯🇵 🇰🇷 🇦🇲 🇳🇱 🇵🇱 🇧🇷 🇵🇹 🇷🇴 🇷🇺 🇸🇪 🇹🇼
 </p>
 
 UnoPim is an open-source Product Information Management (PIM) system built on Laravel 12. It helps businesses organize, manage, and enrich their product information in one central repository — now with built-in AI agent capabilities for conversational product management.
@@ -73,7 +72,7 @@ UnoPim is an open-source Product Information Management (PIM) system built on La
   </tr>
 </table>
 
-> Upgrading from v1.0.0? See the [Upgrade Guide](UPGRADE-1.0.0-2.0.0.md) and [CHANGELOG](CHANGELOG.md) for full release notes.
+> Upgrading from an older version? See the [Upgrade Guide](UPGRADE.md) and [CHANGELOG](CHANGELOG.md) for full release notes.
 
 ## ⚙️ Scalability
 
@@ -169,11 +168,13 @@ php artisan unopim:install
 php artisan serve
 ```
 
-Open `http://localhost:8000` in your browser. To execute imports/exports, AI agent tasks, and completeness jobs, start the queue worker:
+Open `http://localhost:8000` in your browser. To execute imports/exports, AI agent tasks, completeness jobs, and webhook deliveries, start the queue worker:
 
 ```bash
-php artisan queue:work --queue=system,default,completeness
+php artisan queue:work --queue=webhooks,system,default,completeness
 ```
+
+> **Note:** The `webhooks` queue is required for outgoing webhook delivery. The `Webkul\Webhook\Listeners\Product` listener is dispatched asynchronously to this queue so product save/update requests are not blocked by HTTP calls to subscribers. If you omit `webhooks` from the `--queue` list, webhook events will queue up but never be processed.
 
 ### Docker
 
@@ -196,11 +197,19 @@ docker compose -f docker-compose.yml -f docker-compose.apache.yml up -d
 
 > **Port conflicts?** If you already have MySQL, Redis, or Elasticsearch running locally, edit the `FORWARD_*` ports in `.env` and restart. See `.env.docker` for details.
 
+### ☁️ Cloud Hosting (Managed — no setup)
+<p>
+  <a href="https://unopim.com/cloud-hosting">
+    <img src="https://raw.githubusercontent.com/unopim/temp-media/main/cloud-hosting-banner.png" alt="Deploy UnoPim on cost-effective cloud hosting" width="720">
+  </a>
+</p>
+
 ### ☁️ AWS Marketplace
-
-Deploy UnoPim on a pre-configured Amazon Machine Image (AMI) without any manual setup — ideal for scalable production or testing environments.
-
-[**Launch UnoPim on AWS**](https://aws.amazon.com/marketplace/pp/prodview-fdyosdv7k3cgw)
+<p>
+  <a href="https://aws.amazon.com/marketplace/pp/prodview-fdyosdv7k3cgw">
+    <img src="https://raw.githubusercontent.com/unopim/temp-media/main/aws-marketplace-banner.png" alt="Launch UnoPim on AWS Marketplace" width="720">
+  </a>
+</p>
 
 ## 🤝 Contributing
 
